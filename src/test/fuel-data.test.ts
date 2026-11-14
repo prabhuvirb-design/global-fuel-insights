@@ -33,20 +33,14 @@ describe("Granular fuel dataset", () => {
   });
 
   it("has complete valid variables and retail prices equal to base plus tax minus subsidy", () => {
-    for (const row of DATA) {
-      expect(row.country.length).toBeGreaterThan(0);
-      expect(INCOMES).toContain(row.income);
-      expect(row.date.slice(0, 4)).toBe(String(row.year));
-      expect(new Date(row.date).toISOString().slice(0, 10)).toBe(row.date);
-      for (const value of [row.gdp, row.base, row.tax, row.subsidy, row.net, row.volatility]) {
-        expect(Number.isFinite(value)).toBe(true);
-        expect(value).toBeGreaterThanOrEqual(0);
-      }
-      expect(row.gdp).toBeGreaterThan(0);
-      expect(row.net).toBeGreaterThan(0);
-      expect(row.volatility).toBeLessThanOrEqual(100);
-      expect(row.net).toBeCloseTo(row.base + row.tax - row.subsidy, 3);
-    }
+    const invalid = DATA.filter((row) => !row.country ||
+      !INCOMES.some((income) => income === row.income) ||
+      row.date.slice(0, 4) !== String(row.year) ||
+      new Date(row.date).toISOString().slice(0, 10) !== row.date ||
+      [row.gdp, row.base, row.tax, row.subsidy, row.net, row.volatility].some((value) => !Number.isFinite(value) || value < 0) ||
+      row.gdp <= 0 || row.net <= 0 || row.volatility > 100 ||
+      Math.abs(row.net - (row.base + row.tax - row.subsidy)) > 0.000001);
+    expect(invalid).toEqual([]);
   });
 
   it("exports all 27,468 records with their observation dates", () => {
