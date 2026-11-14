@@ -174,6 +174,7 @@ body { font-family: var(--font-sans); letter-spacing: 0; }
 .executive-dashboard th { background: var(--muted); }
 .executive-dashboard td { vertical-align: middle; }
 @media print {
+  .executive-print { --tw-translate-x: 0 !important; --tw-translate-y: 0 !important; }
   @page { size: A4; margin: 16mm; }
   body > *:not([data-slot]) { visibility: hidden; }
   .executive-dashboard, [data-radix-dialog-overlay] { display: none !important; }
