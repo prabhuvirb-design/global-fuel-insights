@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { policyTrend, regionalLeaders, simulatePolicy, TAX_CHANGE_MAX, TAX_CHANGE_MIN } from "@/lib/policy-simulation";
 import { type Row } from "@/lib/fuel-data";
 
-const row: Row = { country: "Country A", region: "Europe", income: "High", gdp: 40000, fuel: "Petrol", year: 2026, base: 1, tax: 0.4, subsidy: 0.1, net: 1.3, volatility: 20 };
+const row: Row = { country: "Country A", region: "Europe", income: "High", gdp: 40000, fuel: "Petrol", year: 2026, date: "2026-01-01", base: 1, tax: 0.4, subsidy: 0.1, net: 1.3, volatility: 20 };
 
 describe("Policy simulation", () => {
   it("reduces tax by 50% at the lower limit, holding base and subsidy fixed", () => {

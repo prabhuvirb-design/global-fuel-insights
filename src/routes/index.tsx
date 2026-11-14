@@ -96,7 +96,7 @@ function Dashboard() {
             <Select label="Income Level" value={income} onChange={setIncome} options={INCOMES} />
             <Select label="Year" value={year} onChange={setYear} options={YEARS} />
             <Button onClick={download} variant="outline" className="h-10 px-4 font-semibold">
-              <Download className="h-4 w-4" /> Download CSV <span className="font-mono text-xs opacity-70">({rows.length})</span>
+              <Download className="h-4 w-4" /> Download CSV <span className="font-mono text-xs opacity-70">({rows.length.toLocaleString("en-US")})</span>
             </Button>
             <Button onClick={() => setSummaryOpen(true)} className="h-10 whitespace-normal px-4"><FileText />Generate Executive Summary</Button>
           </div>
@@ -111,7 +111,7 @@ function Dashboard() {
             <TabsTrigger value="countries" className="min-h-10 whitespace-normal text-center">Macroeconomic Research (Prof. Rodriguez)</TabsTrigger>
           </TabsList>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-          <Kpi icon={Globe2} label="Countries" value={String(countries)} sub={`${rows.length} records`} />
+          <Kpi icon={Globe2} label="Countries" value={String(countries)} sub={`${rows.length.toLocaleString("en-US")} records`} />
           <Kpi icon={Fuel} label="Avg Net Price" value={usd(avg(rows, "net"))} sub="retail, per litre" />
           <Kpi icon={TrendingUp} label="Avg Base" value={usd(avg(rows, "base"))} sub="pre-tax cost" />
           <Kpi icon={Landmark} label="Avg Tax" value={usd(avg(rows, "tax"))} sub="per litre" />
