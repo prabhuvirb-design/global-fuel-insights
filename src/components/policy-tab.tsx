@@ -10,9 +10,9 @@ const tooltipStyle = { background: "var(--popover)", border: "1px solid var(--bo
 const shortRegion: Record<string, string> = { "North America": "N. America", "Latin America": "Latin Am.", "Europe": "Europe", "Middle East & North Africa": "MENA", "Sub-Saharan Africa": "SSA", "South Asia": "S. Asia", "East Asia & Pacific": "E. Asia/Pac" };
 const currency = (value: number) => `$${value.toFixed(3)}`;
 
-export function PolicyTab({ rows, year }: { rows: Row[]; year: string }) {
+export function PolicyTab({ rows, trendRows, year }: { rows: Row[]; trendRows: Row[]; year: string }) {
   const [change, setChange] = useState(0);
-  const trend = useMemo(() => policyTrend(rows, change), [rows, change]);
+  const trend = useMemo(() => policyTrend(trendRows, change), [trendRows, change]);
   const leaders = useMemo(() => regionalLeaders(rows, change), [rows, change]);
   const baseline = rows.length ? rows.reduce((sum, row) => sum + simulatePolicy(row, 0).retail, 0) / rows.length : 0;
   const retail = rows.length ? rows.reduce((sum, row) => sum + simulatePolicy(row, change).retail, 0) / rows.length : 0;
@@ -39,7 +39,7 @@ export function PolicyTab({ rows, year }: { rows: Row[]; year: string }) {
     </section>
 
     <section className="border-b border-border pb-6">
-      <div className="mb-5"><h2 className="text-sm font-semibold">Simulated price composition & consumer retail price</h2><p className="mt-1 text-xs text-muted-foreground">USD per litre · State subsidy deducted below zero</p></div>
+      <div className="mb-5"><h2 className="text-sm font-semibold">Simulated price composition & consumer retail price</h2><p className="mt-1 text-xs text-muted-foreground">2020–2026 · USD per litre · State subsidy deducted below zero</p></div>
       {trend.length ? <ResponsiveContainer width="100%" height={340}><ComposedChart data={trend} stackOffset="sign" margin={{ top: 10, right: 5, left: 5, bottom: 10 }}>
         <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" vertical={false} />
         <XAxis dataKey="year" stroke="var(--muted-foreground)" fontSize={12} />

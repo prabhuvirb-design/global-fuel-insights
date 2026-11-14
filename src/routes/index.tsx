@@ -110,7 +110,7 @@ function Dashboard() {
           <Kpi icon={Activity} label="Volatility" value={avg(rows, "volatility").toFixed(1)} sub="index 0–100" />
         </div>
 
-        <TabsContent value="policy"><PolicyTab rows={rows} year={year} /></TabsContent>
+        <TabsContent value="policy"><PolicyTab rows={rows} trendRows={base} year={year} /></TabsContent>
         <TabsContent value="prices" className="grid gap-6 lg:grid-cols-2 data-[state=inactive]:hidden">
           <Panel title="Price trend 2020–2026 (USD/L)">
             <ResponsiveContainer width="100%" height={280}><LineChart data={trend}>
