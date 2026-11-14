@@ -2,3 +2,5 @@
 - [x] Verify simulation rules and the interactive dashboard.
 - [x] Build Marcus’s fleet calculator, volatility matrix, and 2027 forecast.
 - [x] Test logistics calculations and verify desktop/mobile interactions.
+- [x] Add Rodriguez’s dynamic research insight and income-coded scatter plots with trend toggle.
+- [x] Verify research calculations, filter updates, and desktop/mobile display.

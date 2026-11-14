@@ -5,6 +5,7 @@ import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Sca
 import { DATA, FUELS, INCOMES, REGIONS, YEARS, toCSV, type Row } from "@/lib/fuel-data";
 import { PolicyTab } from "@/components/policy-tab";
 import { LogisticsTab } from "@/components/logistics-tab";
+import { ResearchTab } from "@/components/research-tab";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -100,7 +101,7 @@ function Dashboard() {
           <TabsList className="grid h-auto w-full grid-cols-1 gap-1 sm:grid-cols-3" aria-label="Dashboard views">
             <TabsTrigger value="policy" className="min-h-10 whitespace-normal text-center">Policy &amp; Taxation (Dr. Mitchell)</TabsTrigger>
             <TabsTrigger value="prices" className="min-h-10 whitespace-normal text-center">Supply Chain &amp; Logistics (Marcus)</TabsTrigger>
-            <TabsTrigger value="countries" className="min-h-10">Country Breakdown</TabsTrigger>
+            <TabsTrigger value="countries" className="min-h-10 whitespace-normal text-center">Macroeconomic Research (Prof. Rodriguez)</TabsTrigger>
           </TabsList>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
           <Kpi icon={Globe2} label="Countries" value={String(countries)} sub={`${rows.length} records`} />
@@ -144,7 +145,8 @@ function Dashboard() {
           </Panel>
         </TabsContent>
 
-        <TabsContent value="countries">
+        <TabsContent value="countries" className="min-w-0 space-y-7 overflow-x-clip">
+        <ResearchTab rows={rows} />
         <Panel title={`Country breakdown · ${year === ALL ? "all years" : year} · sorted by net price`}>
           <div className="max-h-[480px] overflow-auto">
             <table className="w-full text-sm">
