@@ -112,8 +112,8 @@ function Dashboard() {
         </div>
 
         <TabsContent value="policy"><PolicyTab rows={rows} trendRows={base} year={year} /></TabsContent>
-        <TabsContent value="prices" className="grid gap-6 lg:grid-cols-2 data-[state=inactive]:hidden">
-          <div className="lg:col-span-2"><LogisticsTab rows={rows} trendRows={base} fuel={fuel} year={year} /></div>
+        <TabsContent value="prices" className="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-2 data-[state=inactive]:hidden">
+          <div className="min-w-0 lg:col-span-2"><LogisticsTab rows={rows} trendRows={base} fuel={fuel} year={year} /></div>
           <Panel title="Price trend 2020–2026 (USD/L)">
             <ResponsiveContainer width="100%" height={280}><LineChart data={trend}>
               <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" /><XAxis dataKey="year" stroke="var(--muted-foreground)" fontSize={12} /><YAxis stroke="var(--muted-foreground)" fontSize={12} />
