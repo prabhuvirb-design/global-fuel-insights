@@ -30,3 +30,4 @@ use the editor.
 <!-- LOVABLE:END -->
 
 - Keep policy simulation calculations in a browser-safe pure module shared by charts and tests so all policy views use the same tax adjustment.
+- Keep fleet rankings, volatility classification, and indicative forecasts in a pure logistics module so UI results can be tested independently.

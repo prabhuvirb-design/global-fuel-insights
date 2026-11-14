@@ -4,6 +4,7 @@ import { Download, Fuel, Globe2, Landmark, Activity, TrendingUp, HandCoins } fro
 import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis, Legend, ZAxis } from "recharts";
 import { DATA, FUELS, INCOMES, REGIONS, YEARS, toCSV, type Row } from "@/lib/fuel-data";
 import { PolicyTab } from "@/components/policy-tab";
+import { LogisticsTab } from "@/components/logistics-tab";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -98,7 +99,7 @@ function Dashboard() {
         <Tabs defaultValue="policy" className="space-y-6">
           <TabsList className="grid h-auto w-full grid-cols-1 gap-1 sm:grid-cols-3" aria-label="Dashboard views">
             <TabsTrigger value="policy" className="min-h-10 whitespace-normal text-center">Policy &amp; Taxation (Dr. Mitchell)</TabsTrigger>
-            <TabsTrigger value="prices" className="min-h-10">Price &amp; Volatility</TabsTrigger>
+            <TabsTrigger value="prices" className="min-h-10 whitespace-normal text-center">Supply Chain &amp; Logistics (Marcus)</TabsTrigger>
             <TabsTrigger value="countries" className="min-h-10">Country Breakdown</TabsTrigger>
           </TabsList>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
@@ -111,7 +112,8 @@ function Dashboard() {
         </div>
 
         <TabsContent value="policy"><PolicyTab rows={rows} trendRows={base} year={year} /></TabsContent>
-        <TabsContent value="prices" className="grid gap-6 lg:grid-cols-2 data-[state=inactive]:hidden">
+        <TabsContent value="prices" className="grid min-w-0 grid-cols-1 gap-6 overflow-x-clip lg:grid-cols-2 data-[state=inactive]:hidden">
+          <div className="min-w-0 lg:col-span-2"><LogisticsTab rows={rows} trendRows={base} fuel={fuel} year={year} /></div>
           <Panel title="Price trend 2020–2026 (USD/L)">
             <ResponsiveContainer width="100%" height={280}><LineChart data={trend}>
               <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" /><XAxis dataKey="year" stroke="var(--muted-foreground)" fontSize={12} /><YAxis stroke="var(--muted-foreground)" fontSize={12} />
