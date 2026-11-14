@@ -3,7 +3,7 @@ export const FUELS = ["Petrol","Diesel","LPG"] as const;
 export const INCOMES = ["High","Upper-Middle","Lower-Middle","Low"] as const;
 export const YEARS = [2020,2021,2022,2023,2024,2025,2026] as const;
 
-const COUNTRIES: Record<string, string[]> = {
+const COUNTRIES: Record<(typeof REGIONS)[number], string[]> = {
   "North America": ["United States","Canada","Mexico","Bahamas","Jamaica","Trinidad & Tobago","Costa Rica","Panama","Guatemala","Honduras","Dominican Rep.","Cuba"],
   "Latin America": ["Brazil","Argentina","Chile","Colombia","Peru","Venezuela","Ecuador","Bolivia","Uruguay","Paraguay","Guyana","Suriname"],
   "Europe": ["Germany","France","United Kingdom","Italy","Spain","Netherlands","Norway","Poland","Sweden","Greece","Ukraine","Romania"],
@@ -16,15 +16,15 @@ const COUNTRIES: Record<string, string[]> = {
 export type Row = { country: string; region: string; income: string; gdp: number; fuel: string; year: number; base: number; tax: number; subsidy: number; net: number; volatility: number };
 
 function rng(seed: number) { return () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }; }
-const yearShock: Record<number, number> = { 2020: 0.78, 2021: 0.95, 2022: 1.32, 2023: 1.12, 2024: 1.05, 2025: 1.0, 2026: 1.03 };
-const yearVol: Record<number, number> = { 2020: 1.4, 2021: 1.0, 2022: 1.6, 2023: 1.1, 2024: 0.9, 2025: 0.85, 2026: 0.95 };
-const fuelMult: Record<string, number> = { Petrol: 1, Diesel: 1.06, LPG: 0.55 };
+const yearShock: Record<(typeof YEARS)[number], number> = { 2020: 0.78, 2021: 0.95, 2022: 1.32, 2023: 1.12, 2024: 1.05, 2025: 1.0, 2026: 1.03 };
+const yearVol: Record<(typeof YEARS)[number], number> = { 2020: 1.4, 2021: 1.0, 2022: 1.6, 2023: 1.1, 2024: 0.9, 2025: 0.85, 2026: 0.95 };
+const fuelMult: Record<(typeof FUELS)[number], number> = { Petrol: 1, Diesel: 1.06, LPG: 0.55 };
 
 export const DATA: Row[] = (() => {
   const r = rng(20261114); const out: Row[] = [];
   for (const region of REGIONS) for (const country of COUNTRIES[region]) {
     const p = r(); const rich = region === "Europe" || region === "North America" || region === "East Asia & Pacific";
-    const income = INCOMES[rich ? (p < 0.6 ? 0 : p < 0.9 ? 1 : 2) : Math.floor(p * 4)];
+    const income = INCOMES[rich ? (p < 0.6 ? 0 : p < 0.9 ? 1 : 2) : Math.floor(p * 4)] as (typeof INCOMES)[number];
     const gdpBase = { High: 45000, "Upper-Middle": 11000, "Lower-Middle": 3800, Low: 1100 }[income]!;
     const gdp0 = gdpBase * (0.6 + r() * 0.9);
     const taxRate = { High: 0.55, "Upper-Middle": 0.3, "Lower-Middle": 0.18, Low: 0.12 }[income]! * (0.6 + r() * 0.8);
