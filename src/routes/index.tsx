@@ -16,6 +16,7 @@ export const Route = createFileRoute("/")({
 });
 
 const ALL = "All";
+const SHORT: Record<string, string> = { "North America": "N. America", "Latin America": "Latin Am.", Europe: "Europe", "Middle East & North Africa": "MENA", "Sub-Saharan Africa": "SSA", "South Asia": "S. Asia", "East Asia & Pacific": "E. Asia/Pac" };
 const avg = (rows: Row[], k: keyof Row) => rows.length ? rows.reduce((s, r) => s + (r[k] as number), 0) / rows.length : 0;
 const usd = (n: number) => `$${n.toFixed(2)}`;
 const tip = { contentStyle: { background: "var(--popover)", border: "1px solid var(--border)", borderRadius: 8, color: "var(--popover-foreground)", fontSize: 12 } };
@@ -55,7 +56,7 @@ function Dashboard() {
   const countries = new Set(rows.map((r) => r.country)).size;
 
   const trend = YEARS.map((y) => { const s = base.filter((r) => r.year === y); return { year: y, Net: +avg(s, "net").toFixed(3), Base: +avg(s, "base").toFixed(3), Volatility: +avg(s, "volatility").toFixed(1) }; });
-  const byRegion = REGIONS.filter((g) => region === ALL || g === region).map((g) => { const s = rows.filter((r) => r.region === g); return { region: g.replace(" & ", " & ").split(" ").map((w) => w[0]).join(""), full: g, Base: +avg(s, "base").toFixed(3), Tax: +avg(s, "tax").toFixed(3), Subsidy: +avg(s, "subsidy").toFixed(3) }; });
+  const byRegion = REGIONS.filter((g) => region === ALL || g === region).map((g) => { const s = rows.filter((r) => r.region === g); return { region: SHORT[g], full: g, Base: +avg(s, "base").toFixed(3), Tax: +avg(s, "tax").toFixed(3), Subsidy: +avg(s, "subsidy").toFixed(3) }; });
   const byCountry = Object.values(rows.reduce<Record<string, { country: string; gdp: number; net: number; n: number; vol: number; region: string; income: string }>>((acc, r) => {
     const c = (acc[r.country] ??= { country: r.country, gdp: 0, net: 0, n: 0, vol: 0, region: r.region, income: r.income });
     c.gdp += r.gdp; c.net += r.net; c.vol += r.volatility; c.n++; return acc;

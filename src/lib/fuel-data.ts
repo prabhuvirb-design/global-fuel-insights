@@ -13,6 +13,10 @@ const COUNTRIES: Record<(typeof REGIONS)[number], string[]> = {
   "East Asia & Pacific": ["China","Japan","South Korea","Australia","Indonesia","Vietnam","Thailand","Philippines","Malaysia","Singapore","New Zealand","Mongolia"],
 };
 
+const HIGH = new Set(["United States","Canada","Bahamas","Trinidad & Tobago","Panama","Chile","Uruguay","Germany","France","United Kingdom","Italy","Spain","Netherlands","Norway","Poland","Sweden","Greece","Romania","Saudi Arabia","UAE","Qatar","Kuwait","Oman","Japan","South Korea","Australia","Singapore","New Zealand","Guyana"]);
+const LOW = new Set(["Ethiopia","Uganda","Mozambique","Afghanistan","Senegal","Zambia"]);
+const LOWER = new Set(["Honduras","Bolivia","Venezuela","Ukraine","Iran","Egypt","Morocco","Algeria","Jordan","Tunisia","Nigeria","Kenya","Ghana","Angola","Tanzania","Côte d'Ivoire","India","Pakistan","Bangladesh","Sri Lanka","Nepal","Bhutan","Myanmar","Uzbekistan","Vietnam","Philippines","Mongolia","Cuba"]);
+
 export type Row = { country: string; region: string; income: string; gdp: number; fuel: string; year: number; base: number; tax: number; subsidy: number; net: number; volatility: number };
 
 function rng(seed: number) { return () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }; }
