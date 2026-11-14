@@ -6,3 +6,5 @@
 - [x] Verify research calculations, filter updates, and desktop/mobile display.
 - [x] Apply the executive light theme, paginate all tables, and add active-insight print summaries.
 - [x] Verify pagination, scenario summaries, printing, and mobile layout.
+- [x] Expand sample data to exactly 27,468 complete dated records across all country/fuel combinations.
+- [x] Verify all three tabs’ live charts, calculations, filters, pagination, and full CSV export.

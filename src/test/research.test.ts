@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { researchCountries, researchInsight, regressionTrend } from "@/lib/research";
 import { type Row } from "@/lib/fuel-data";
-const row: Row = { country: "A", region: "Europe", income: "High", gdp: 10000, fuel: "Diesel", year: 2026, base: 1, tax: 0.4, subsidy: 0.1, net: 1.3, volatility: 20 };
+const row: Row = { country: "A", region: "Europe", income: "High", gdp: 10000, fuel: "Diesel", year: 2026, date: "2026-01-01", base: 1, tax: 0.4, subsidy: 0.1, net: 1.3, volatility: 20 };
 describe("Macroeconomic research", () => {
   it("compares high-income average taxes with developing-country average subsidies", () => {
     const countries = researchCountries([row, { ...row, country: "B", tax: 0.6 }, { ...row, country: "C", income: "Upper-Middle", subsidy: 0.2 }, { ...row, country: "D", income: "Lower-Middle", subsidy: 0.3 }, { ...row, country: "E", income: "Low", subsidy: 0.4 }]);

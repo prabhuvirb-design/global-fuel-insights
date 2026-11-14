@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { cheapestRefueling, volatilityRisk, priceForecast } from "@/lib/logistics";
 import { type Row } from "@/lib/fuel-data";
 
-const row: Row = { country: "A", region: "Europe", income: "High", gdp: 40000, fuel: "Diesel", year: 2026, base: 1, tax: 0.3, subsidy: 0.1, net: 1.2, volatility: 20 };
+const row: Row = { country: "A", region: "Europe", income: "High", gdp: 40000, fuel: "Diesel", year: 2026, date: "2026-01-01", base: 1, tax: 0.3, subsidy: 0.1, net: 1.2, volatility: 20 };
 describe("Logistics calculations", () => {
   it("ranks the top three cheapest countries and multiplies price by liters", () => {
     const results = cheapestRefueling([row, { ...row, country: "B", net: 0.5 }, { ...row, country: "C", net: 2 }, { ...row, country: "D", net: 0.8 }], 400);

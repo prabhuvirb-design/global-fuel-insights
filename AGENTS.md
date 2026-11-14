@@ -34,3 +34,4 @@ use the editor.
 - Keep country-level research averages and least-squares trends in a pure research module so comparisons and scatter plots share testable calculations.
 - Use a shared paginated-table wrapper to render only the current page and reset on filter changes.
 - Keep scenario inputs in the dashboard parent so printable summaries use the active tab's exact current inputs without recomputing defaults.
+- Generate fuel observations on one shared deterministic date schedule and export the date with each row so time-series records remain unique and all countries and fuels have identical coverage.
