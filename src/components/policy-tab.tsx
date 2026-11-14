@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { RotateCcw, SlidersHorizontal } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, ComposedChart, Legend, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { PaginatedTable } from "@/components/paginated-table";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { type Row } from "@/lib/fuel-data";
@@ -10,8 +11,7 @@ const tooltipStyle = { background: "var(--popover)", border: "1px solid var(--bo
 const shortRegion: Record<string, string> = { "North America": "N. America", "Latin America": "Latin Am.", "Europe": "Europe", "Middle East & North Africa": "MENA", "Sub-Saharan Africa": "SSA", "South Asia": "S. Asia", "East Asia & Pacific": "E. Asia/Pac" };
 const currency = (value: number) => `$${value.toFixed(3)}`;
 
-export function PolicyTab({ rows, trendRows, year }: { rows: Row[]; trendRows: Row[]; year: string }) {
-  const [change, setChange] = useState(0);
+export function PolicyTab({ rows, trendRows, year, change, setChange }: { rows: Row[]; trendRows: Row[]; year: string; change: number; setChange: (value: number) => void }) {
   const trend = useMemo(() => policyTrend(trendRows, change), [trendRows, change]);
   const leaders = useMemo(() => regionalLeaders(rows, change), [rows, change]);
   const baseline = rows.length ? rows.reduce((sum, row) => sum + simulatePolicy(row, 0).retail, 0) / rows.length : 0;
@@ -67,7 +67,7 @@ export function PolicyTab({ rows, trendRows, year }: { rows: Row[]; trendRows: R
           <Bar dataKey="taxIntensity" name="Tax intensity" fill="var(--chart-1)" radius={[0, 3, 3, 0]} maxBarSize={16} isAnimationActive={false} />
           <Bar dataKey="subsidyIntensity" name="Subsidy intensity" fill="var(--chart-3)" radius={[0, 3, 3, 0]} maxBarSize={16} isAnimationActive={false} />
         </BarChart></ResponsiveContainer>
-        <div className="mt-5 overflow-x-auto"><table className="w-full text-left text-sm"><thead className="text-xs text-muted-foreground"><tr><th className="py-3 pr-4 font-medium">Region</th><th className="py-3 pr-4 font-medium">Highest tax intensity</th><th className="py-3 font-medium">Highest fuel subsidy</th></tr></thead><tbody>{leaders.map((leader) => <tr key={leader.region} className="border-t border-border"><td className="py-3 pr-4">{leader.region}</td><td className="py-3 pr-4">{leader.taxCountry} <span className="font-mono text-primary">{leader.taxIntensity.toFixed(1)}%</span></td><td className="py-3">{leader.subsidyCountry} <span className="font-mono text-chart-3">{leader.subsidyIntensity.toFixed(1)}%</span></td></tr>)}</tbody></table></div>
+        <div className="mt-5"><PaginatedTable items={leaders}>{(pageRows) => <table className="w-full text-left text-sm"><thead className="text-xs text-muted-foreground"><tr><th className="py-3 pr-4 font-medium">Region</th><th className="py-3 pr-4 font-medium">Highest tax intensity</th><th className="py-3 font-medium">Highest fuel subsidy</th></tr></thead><tbody>{pageRows.map((leader) => <tr key={leader.region} className="border-t border-border"><td className="py-3 pr-4">{leader.region}</td><td className="py-3 pr-4">{leader.taxCountry} <span className="font-mono text-primary">{leader.taxIntensity.toFixed(1)}%</span></td><td className="py-3">{leader.subsidyCountry} <span className="font-mono text-chart-3">{leader.subsidyIntensity.toFixed(1)}%</span></td></tr>)}</tbody></table>}</PaginatedTable></div>
       </> : <div className="grid h-60 place-items-center text-sm text-muted-foreground">No data for this filter combination.</div>}
     </section>
   </div>;

@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Truck, Fuel } from "lucide-react";
 import { Area, CartesianGrid, ComposedChart, Legend, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { PaginatedTable } from "@/components/paginated-table";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { cheapestRefueling, countryPrices, priceForecast, volatilityRisk } from "@/lib/logistics";
@@ -9,8 +10,7 @@ import { type Row } from "@/lib/fuel-data";
 const usd = (value: number) => `$${value.toFixed(2)}`;
 const riskClasses = { "High Volatility": "border-risk-high/40 bg-risk-high/15 text-risk-high", Moderate: "border-risk-moderate/40 bg-risk-moderate/15 text-risk-moderate", Stable: "border-risk-stable/40 bg-risk-stable/15 text-risk-stable" };
 
-export function LogisticsTab({ rows, trendRows, fuel, year }: { rows: Row[]; trendRows: Row[]; fuel: string; year: string }) {
-  const [capacity, setCapacity] = useState("400");
+export function LogisticsTab({ rows, trendRows, fuel, year, capacity, setCapacity }: { rows: Row[]; trendRows: Row[]; fuel: string; year: string; capacity: string; setCapacity: (value: string) => void }) {
   const liters = Number(capacity);
   const valid = capacity.trim() !== "" && Number.isFinite(liters) && liters > 0;
   const cheapest = useMemo(() => cheapestRefueling(rows, liters), [rows, liters]);
@@ -51,7 +51,7 @@ export function LogisticsTab({ rows, trendRows, fuel, year }: { rows: Row[]; tre
 
     <section>
       <h2 className="text-sm font-semibold">Price Volatility Matrix</h2><p className="mt-1 mb-4 text-xs text-muted-foreground">Volatility index: Stable &lt;35 · Moderate 35–&lt;60 · High ≥60 · Retail prices in USD/L</p>
-      <div className="max-h-[480px] overflow-auto"><table aria-label="Price Volatility Matrix" className="w-full text-left text-sm"><thead className="sticky top-0 z-10 bg-background text-xs text-muted-foreground"><tr>{["Country", "Region", "Retail price", "Volatility", "Risk"].map((heading) => <th key={heading} className="border-b border-border px-3 py-3 font-medium">{heading}</th>)}</tr></thead><tbody>{matrix.map((country) => <tr key={country.country} className="border-b border-border/60 hover:bg-muted/50"><td className="px-3 py-3 font-medium">{country.country}</td><td className="px-3 py-3 text-muted-foreground">{country.region}</td><td className="px-3 py-3 font-mono">${country.price.toFixed(3)}</td><td className="px-3 py-3 font-mono">{country.volatility.toFixed(1)}</td><td className="px-3 py-3"><Badge variant="outline" className={`whitespace-nowrap ${riskClasses[volatilityRisk(country.volatility)]}`}>{volatilityRisk(country.volatility)}</Badge></td></tr>)}{!matrix.length && <tr><td colSpan={5} className="py-8 text-center text-muted-foreground">No data for this filter combination.</td></tr>}</tbody></table></div>
+      <PaginatedTable items={matrix}>{(pageRows) => <table aria-label="Price Volatility Matrix" className="w-full text-left text-sm"><thead className="sticky top-0 z-10 bg-background text-xs text-muted-foreground"><tr>{["Country", "Region", "Retail price", "Volatility", "Risk"].map((heading) => <th key={heading} className="border-b border-border px-3 py-3 font-medium">{heading}</th>)}</tr></thead><tbody>{pageRows.map((country) => <tr key={country.country} className="border-b border-border/60 hover:bg-muted/50"><td className="px-3 py-3 font-medium">{country.country}</td><td className="px-3 py-3 text-muted-foreground">{country.region}</td><td className="px-3 py-3 font-mono">${country.price.toFixed(3)}</td><td className="px-3 py-3 font-mono">{country.volatility.toFixed(1)}</td><td className="px-3 py-3"><Badge variant="outline" className={`whitespace-nowrap ${riskClasses[volatilityRisk(country.volatility)]}`}>{volatilityRisk(country.volatility)}</Badge></td></tr>)}{!matrix.length && <tr><td colSpan={5} className="py-8 text-center text-muted-foreground">No data for this filter combination.</td></tr>}</tbody></table>}</PaginatedTable>
     </section>
   </div>;
 }

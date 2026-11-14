@@ -4,3 +4,5 @@
 - [x] Test logistics calculations and verify desktop/mobile interactions.
 - [x] Add Rodriguez’s dynamic research insight and income-coded scatter plots with trend toggle.
 - [x] Verify research calculations, filter updates, and desktop/mobile display.
+- [x] Apply the executive light theme, paginate all tables, and add active-insight print summaries.
+- [x] Verify pagination, scenario summaries, printing, and mobile layout.
