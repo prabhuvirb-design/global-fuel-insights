@@ -1,0 +1,2 @@
+- [ ] Add three dashboard tabs, live tax sandbox, combined chart, and regional country leaders.
+- [ ] Verify simulation rules and the interactive dashboard.
