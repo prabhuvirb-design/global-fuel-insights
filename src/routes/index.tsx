@@ -1,11 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Download, Fuel, Globe2, Landmark, Activity, TrendingUp, HandCoins } from "lucide-react";
+import { Download, FileText, Fuel, Globe2, Landmark, Activity, TrendingUp, HandCoins } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis, Legend, ZAxis } from "recharts";
 import { DATA, FUELS, INCOMES, REGIONS, YEARS, toCSV, type Row } from "@/lib/fuel-data";
 import { PolicyTab } from "@/components/policy-tab";
 import { LogisticsTab } from "@/components/logistics-tab";
 import { ResearchTab } from "@/components/research-tab";
+import { PaginatedTable } from "@/components/paginated-table";
+import { ExecutiveSummary } from "@/components/executive-summary";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -40,8 +42,8 @@ function Select({ label, value, onChange, options }: { label: string; value: str
 
 function Kpi({ icon: Icon, label, value, sub }: { icon: typeof Fuel; label: string; value: string; sub: string }) {
   return (
-    <div className="rounded-xl border border-border bg-card p-5">
-      <div className="flex items-center justify-between text-muted-foreground"><span className="text-xs font-mono uppercase tracking-widest">{label}</span><Icon className="h-4 w-4 text-primary" /></div>
+    <div className="rounded-lg border border-border bg-card p-5 shadow-executive">
+      <div className="flex items-center justify-between text-muted-foreground"><span className="text-xs font-medium">{label}</span><Icon className="h-4 w-4 text-primary" /></div>
       <div className="mt-3 font-mono text-3xl font-semibold text-foreground">{value}</div>
       <div className="mt-1 text-xs text-muted-foreground">{sub}</div>
     </div>
@@ -49,10 +51,14 @@ function Kpi({ icon: Icon, label, value, sub }: { icon: typeof Fuel; label: stri
 }
 
 function Panel({ title, children, className = "" }: { title: string; children: React.ReactNode; className?: string }) {
-  return <section className={`rounded-xl border border-border bg-card p-5 ${className}`}><h2 className="mb-4 text-sm font-semibold text-foreground">{title}</h2>{children}</section>;
+  return <section className={`rounded-lg border border-border bg-card p-5 shadow-executive ${className}`}><h2 className="mb-4 text-sm font-semibold text-foreground">{title}</h2>{children}</section>;
 }
 
 function Dashboard() {
+  const [activeTab, setActiveTab] = useState("policy");
+  const [summaryOpen, setSummaryOpen] = useState(false);
+  const [taxChange, setTaxChange] = useState(0);
+  const [capacity, setCapacity] = useState("400");
   const [fuel, setFuel] = useState(ALL); const [region, setRegion] = useState(ALL);
   const [income, setIncome] = useState(ALL); const [year, setYear] = useState("2026");
 
@@ -66,7 +72,7 @@ function Dashboard() {
     const c = (acc[r.country] ??= { country: r.country, gdp: 0, net: 0, n: 0, vol: 0, region: r.region, income: r.income });
     c.gdp += r.gdp; c.net += r.net; c.vol += r.volatility; c.n++; return acc;
   }, {})).map((c) => ({ ...c, gdp: Math.round(c.gdp / c.n), net: +(c.net / c.n).toFixed(3), vol: +(c.vol / c.n).toFixed(1) }));
-  const top = [...byCountry].sort((a, b) => b.net - a.net);
+  const top = useMemo(() => [...byCountry].sort((a, b) => b.net - a.net), [rows]);
 
   const download = () => {
     const blob = new Blob([toCSV(rows)], { type: "text/csv;charset=utf-8" });
@@ -76,28 +82,29 @@ function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <header className="sticky top-0 z-20 border-b border-border bg-background/90 backdrop-blur">
+    <div className="executive-dashboard min-h-screen bg-background text-foreground">
+      <header className="sticky top-0 z-20 border-b border-border bg-card/95 shadow-executive backdrop-blur">
         <div className="mx-auto max-w-7xl px-6 py-4">
           <div className="mb-3 flex items-center gap-3">
             <div className="grid h-9 w-9 place-items-center rounded-md bg-primary text-primary-foreground"><Fuel className="h-5 w-5" /></div>
-            <div><h1 className="text-lg font-semibold leading-tight">Global Fuel Economics Dashboard <span className="text-primary">2020–2026</span></h1>
+            <div><h1 className="text-xl font-semibold leading-tight">Global Fuel Economics Dashboard <span className="text-primary">2020–2026</span></h1>
               <p className="text-xs text-muted-foreground">84 countries · 7 regions · prices in USD per litre (sample data)</p></div>
           </div>
-          <div className="flex flex-wrap items-end gap-3">
+          <div className="flex flex-wrap items-end gap-3 border-t border-border pt-4">
             <Select label="Fuel Type" value={fuel} onChange={setFuel} options={FUELS} />
             <Select label="Global Region" value={region} onChange={setRegion} options={REGIONS} />
             <Select label="Income Level" value={income} onChange={setIncome} options={INCOMES} />
             <Select label="Year" value={year} onChange={setYear} options={YEARS} />
-            <Button onClick={download} className="ml-auto h-10 px-4 font-semibold">
+            <Button onClick={download} variant="outline" className="h-10 px-4 font-semibold">
               <Download className="h-4 w-4" /> Download CSV <span className="font-mono text-xs opacity-70">({rows.length})</span>
             </Button>
+            <Button onClick={() => setSummaryOpen(true)} className="h-10 whitespace-normal px-4"><FileText />Generate Executive Summary</Button>
           </div>
         </div>
       </header>
 
       <main className="mx-auto max-w-7xl space-y-6 px-6 py-6">
-        <Tabs defaultValue="policy" className="space-y-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid h-auto w-full grid-cols-1 gap-1 sm:grid-cols-3" aria-label="Dashboard views">
             <TabsTrigger value="policy" className="min-h-10 whitespace-normal text-center">Policy &amp; Taxation (Dr. Mitchell)</TabsTrigger>
             <TabsTrigger value="prices" className="min-h-10 whitespace-normal text-center">Supply Chain &amp; Logistics (Marcus)</TabsTrigger>
@@ -112,9 +119,9 @@ function Dashboard() {
           <Kpi icon={Activity} label="Volatility" value={avg(rows, "volatility").toFixed(1)} sub="index 0–100" />
         </div>
 
-        <TabsContent value="policy"><PolicyTab rows={rows} trendRows={base} year={year} /></TabsContent>
+        <TabsContent value="policy"><PolicyTab rows={rows} trendRows={base} year={year} change={taxChange} setChange={setTaxChange} /></TabsContent>
         <TabsContent value="prices" className="grid min-w-0 grid-cols-1 gap-6 overflow-x-clip lg:grid-cols-2 data-[state=inactive]:hidden">
-          <div className="min-w-0 lg:col-span-2"><LogisticsTab rows={rows} trendRows={base} fuel={fuel} year={year} /></div>
+          <div className="min-w-0 lg:col-span-2"><LogisticsTab rows={rows} trendRows={base} fuel={fuel} year={year} capacity={capacity} setCapacity={setCapacity} /></div>
           <Panel title="Price trend 2020–2026 (USD/L)">
             <ResponsiveContainer width="100%" height={280}><LineChart data={trend}>
               <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" /><XAxis dataKey="year" stroke="var(--muted-foreground)" fontSize={12} /><YAxis stroke="var(--muted-foreground)" fontSize={12} />
@@ -148,14 +155,14 @@ function Dashboard() {
         <TabsContent value="countries" className="min-w-0 space-y-7 overflow-x-clip">
         <ResearchTab rows={rows} />
         <Panel title={`Country breakdown · ${year === ALL ? "all years" : year} · sorted by net price`}>
-          <div className="max-h-[480px] overflow-auto">
+          <PaginatedTable items={top}>{(pageRows, offset) => (
             <table className="w-full text-sm">
               <thead className="sticky top-0 bg-card text-left text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
                 <tr>{["#", "Country", "Region", "Income", "GDP/cap", "Net price", "Volatility"].map((h) => <th key={h} className="border-b border-border px-3 py-2">{h}</th>)}</tr>
               </thead>
-              <tbody>{top.map((c, i) => (
+              <tbody>{pageRows.map((c, i) => (
                 <tr key={c.country} className="border-b border-border/60 hover:bg-muted/50">
-                  <td className="px-3 py-2 font-mono text-muted-foreground">{i + 1}</td><td className="px-3 py-2 font-medium">{c.country}</td>
+                  <td className="px-3 py-2 font-mono text-muted-foreground">{offset + i + 1}</td><td className="px-3 py-2 font-medium">{c.country}</td>
                   <td className="px-3 py-2 text-muted-foreground">{c.region}</td><td className="px-3 py-2">{c.income}</td>
                   <td className="px-3 py-2 font-mono">${c.gdp.toLocaleString()}</td><td className="px-3 py-2 font-mono text-primary">{usd(c.net)}</td>
                   <td className="px-3 py-2"><div className="flex items-center gap-2"><div className="h-1.5 w-20 rounded bg-muted"><div className="h-full rounded bg-chart-4" style={{ width: `${c.vol}%` }} /></div><span className="font-mono text-xs">{c.vol}</span></div></td>
@@ -163,11 +170,12 @@ function Dashboard() {
                 {!top.length && <tr><td colSpan={7} className="px-3 py-8 text-center text-muted-foreground">No data for this filter combination.</td></tr>}
               </tbody>
             </table>
-          </div>
+          )}</PaginatedTable>
         </Panel>
         </TabsContent>
         </Tabs>
       </main>
+      <ExecutiveSummary open={summaryOpen} onOpenChange={setSummaryOpen} rows={rows} trendRows={base} tab={activeTab} filters={`Fuel: ${fuel} · Region: ${region} · Income: ${income} · Year: ${year}`} taxChange={taxChange} capacity={capacity} />
     </div>
   );
 }
