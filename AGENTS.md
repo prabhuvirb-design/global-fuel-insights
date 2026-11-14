@@ -28,3 +28,5 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+- Keep policy simulation calculations in a browser-safe pure module shared by charts and tests so all policy views use the same tax adjustment.

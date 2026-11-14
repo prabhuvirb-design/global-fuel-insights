@@ -3,6 +3,9 @@ import { useMemo, useState } from "react";
 import { Download, Fuel, Globe2, Landmark, Activity, TrendingUp, HandCoins } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis, Legend, ZAxis } from "recharts";
 import { DATA, FUELS, INCOMES, REGIONS, YEARS, toCSV, type Row } from "@/lib/fuel-data";
+import { PolicyTab } from "@/components/policy-tab";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
@@ -84,14 +87,20 @@ function Dashboard() {
             <Select label="Global Region" value={region} onChange={setRegion} options={REGIONS} />
             <Select label="Income Level" value={income} onChange={setIncome} options={INCOMES} />
             <Select label="Year" value={year} onChange={setYear} options={YEARS} />
-            <button onClick={download} className="ml-auto inline-flex h-10 items-center gap-2 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:opacity-90">
+            <Button onClick={download} className="ml-auto h-10 px-4 font-semibold">
               <Download className="h-4 w-4" /> Download CSV <span className="font-mono text-xs opacity-70">({rows.length})</span>
-            </button>
+            </Button>
           </div>
         </div>
       </header>
 
       <main className="mx-auto max-w-7xl space-y-6 px-6 py-6">
+        <Tabs defaultValue="policy" className="space-y-6">
+          <TabsList className="grid h-auto w-full grid-cols-1 gap-1 sm:grid-cols-3" aria-label="Dashboard views">
+            <TabsTrigger value="policy" className="min-h-10 whitespace-normal text-center">Policy &amp; Taxation (Dr. Mitchell)</TabsTrigger>
+            <TabsTrigger value="prices" className="min-h-10">Price &amp; Volatility</TabsTrigger>
+            <TabsTrigger value="countries" className="min-h-10">Country Breakdown</TabsTrigger>
+          </TabsList>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
           <Kpi icon={Globe2} label="Countries" value={String(countries)} sub={`${rows.length} records`} />
           <Kpi icon={Fuel} label="Avg Net Price" value={usd(avg(rows, "net"))} sub="retail, per litre" />
@@ -101,7 +110,8 @@ function Dashboard() {
           <Kpi icon={Activity} label="Volatility" value={avg(rows, "volatility").toFixed(1)} sub="index 0–100" />
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-2">
+        <TabsContent value="policy"><PolicyTab rows={rows} trendRows={base} year={year} /></TabsContent>
+        <TabsContent value="prices" className="grid gap-6 lg:grid-cols-2 data-[state=inactive]:hidden">
           <Panel title="Price trend 2020–2026 (USD/L)">
             <ResponsiveContainer width="100%" height={280}><LineChart data={trend}>
               <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" /><XAxis dataKey="year" stroke="var(--muted-foreground)" fontSize={12} /><YAxis stroke="var(--muted-foreground)" fontSize={12} />
@@ -130,8 +140,9 @@ function Dashboard() {
               <Tooltip {...tip} /><Bar dataKey="Volatility" fill="var(--chart-4)" radius={[3, 3, 0, 0]} />
             </BarChart></ResponsiveContainer>
           </Panel>
-        </div>
+        </TabsContent>
 
+        <TabsContent value="countries">
         <Panel title={`Country breakdown · ${year === ALL ? "all years" : year} · sorted by net price`}>
           <div className="max-h-[480px] overflow-auto">
             <table className="w-full text-sm">
@@ -150,6 +161,8 @@ function Dashboard() {
             </table>
           </div>
         </Panel>
+        </TabsContent>
+        </Tabs>
       </main>
     </div>
   );
