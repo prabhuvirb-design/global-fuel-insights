@@ -21,9 +21,9 @@ describe("Policy simulation", () => {
   it("stacks subsidy below zero and updates the retail line", () => {
     const points = policyTrend([row], 50);
     expect(points).toHaveLength(1);
-    expect(points[0].year).toBe(2026);
-    expect(points[0].subsidy).toBe(-0.1);
-    expect(points[0].retail).toBeCloseTo(1.5);
+    expect(points[0]?.year).toBe(2026);
+    expect(points[0]?.subsidy).toBe(-0.1);
+    expect(points[0]?.retail).toBeCloseTo(1.5);
   });
   it("finds separate country leaders for tax and subsidy intensity within each region", () => {
     const comparison = regionalLeaders([row, { ...row, country: "Country B", tax: 0.2, subsidy: 0.7 }], 0);
