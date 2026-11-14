@@ -23,7 +23,8 @@ const fuelMult: Record<string, number> = { Petrol: 1, Diesel: 1.06, LPG: 0.55 };
 export const DATA: Row[] = (() => {
   const r = rng(20261114); const out: Row[] = [];
   for (const region of REGIONS) for (const country of COUNTRIES[region]) {
-    const p = r(); const income = INCOMES[region === "Europe" || region === "North America" && p < 0.3 ? (p < 0.75 ? 0 : 1) : Math.floor(r() * 4)];
+    const p = r(); const rich = region === "Europe" || region === "North America" || region === "East Asia & Pacific";
+    const income = INCOMES[rich ? (p < 0.6 ? 0 : p < 0.9 ? 1 : 2) : Math.floor(p * 4)];
     const gdpBase = { High: 45000, "Upper-Middle": 11000, "Lower-Middle": 3800, Low: 1100 }[income]!;
     const gdp0 = gdpBase * (0.6 + r() * 0.9);
     const taxRate = { High: 0.55, "Upper-Middle": 0.3, "Lower-Middle": 0.18, Low: 0.12 }[income]! * (0.6 + r() * 0.8);
